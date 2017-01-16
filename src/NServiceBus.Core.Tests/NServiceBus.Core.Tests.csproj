@@ -102,7 +102,7 @@
   <ItemGroup>
     <Compile Include="API\APIApprovals.cs" />
     <Compile Include="ApprovalTestConfig.cs" />
-    <Compile Include="App_Packages\PublicApiGenerator.5.0.0\ApiGenerator.cs" />
+    <Compile Include="App_Packages\PublicApiGenerator.6.0.0\ApiGenerator.cs" />
     <Compile Include="AssemblyScanner\AssemblyScannerTests.cs" />
     <Compile Include="AssemblyScanner\When_checking_image_type.cs" />
     <Compile Include="AssemblyScanner\When_directory_with_no_reference_dlls_is_scanned.cs" />
@@ -144,6 +144,8 @@
     <Compile Include="Msmq\MsmqSubscriptionStorageTests.cs" />
     <Compile Include="Persistence\InMemory\InMemorySubscriptionStorageTests.cs" />
     <Compile Include="Persistence\InMemory\SagaWithoutUniquePropertyData.cs" />
+    <Compile Include="Persistence\InMemory\When_dtc_enlisted_saga_fails_to_commit.cs" />
+    <Compile Include="Persistence\InMemory\When_persisting_a_saga_with_complex_types.cs" />
     <Compile Include="Persistence\InMemory\When_persisting_a_saga_with_InMemory_and_an_escalated_DTC_transaction.cs" />
     <Compile Include="Persistence\InMemory\When_persisting_a_saga_with_no_defined_unique_property.cs" />
     <Compile Include="Persistence\InMemory\When_completing_a_saga_with_no_defined_unique_property.cs" />
