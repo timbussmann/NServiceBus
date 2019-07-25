@@ -4,6 +4,7 @@ namespace NServiceBus
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using Extensibility;
     using Features;
     using Installation;
     using MessageInterfaces;
@@ -165,7 +166,8 @@ namespace NServiceBus
                 builder,
                 criticalError,
                 errorQueue,
-                messageMapper);
+                messageMapper, 
+                settings.Get<Func<ContextBag, IDisposable>>("ResolverFactory"));
 
             receiveComponent.BindQueues(queueBindings);
 

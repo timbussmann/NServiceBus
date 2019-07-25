@@ -4,6 +4,7 @@ namespace NServiceBus
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using Extensibility;
     using Logging;
     using MessageInterfaces;
     using ObjectBuilder;
@@ -20,7 +21,7 @@ namespace NServiceBus
             IBuilder builder,
             CriticalError criticalError,
             string errorQueue,
-            IMessageMapper messageMapper)
+            IMessageMapper messageMapper, Func<ContextBag, IDisposable> externalResolverFactory)
         {
             this.configuration = configuration;
             this.receiveInfrastructure = receiveInfrastructure;
@@ -31,6 +32,7 @@ namespace NServiceBus
             this.criticalError = criticalError;
             this.errorQueue = errorQueue;
             this.messageMapper = messageMapper;
+            this.externalResolverFactory = externalResolverFactory;
         }
 
         public void BindQueues(QueueBindings queueBindings)
@@ -61,7 +63,7 @@ namespace NServiceBus
             }
 
             var mainPipeline = new Pipeline<ITransportReceiveContext>(builder, pipelineConfiguration.Modifications);
-            mainPipelineExecutor = new MainPipelineExecutor(builder, eventAggregator, pipelineCache, mainPipeline, messageMapper);
+            mainPipelineExecutor = new MainPipelineExecutor(builder, eventAggregator, pipelineCache, mainPipeline, messageMapper, externalResolverFactory);
 
             if (configuration.PurgeOnStartup)
             {
@@ -190,5 +192,6 @@ namespace NServiceBus
         const string MainReceiverId = "Main";
 
         static ILog Logger = LogManager.GetLogger<ReceiveComponent>();
+        Func<ContextBag, IDisposable> externalResolverFactory;
     }
 }

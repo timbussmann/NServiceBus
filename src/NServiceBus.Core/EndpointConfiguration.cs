@@ -7,6 +7,7 @@ namespace NServiceBus
     using System.Transactions;
     using Configuration.AdvancedExtensibility;
     using Container;
+    using Extensibility;
     using Hosting.Helpers;
     using ObjectBuilder;
     using ObjectBuilder.Common;
@@ -18,7 +19,8 @@ namespace NServiceBus
     /// <summary>
     /// Configuration used to create an endpoint instance.
     /// </summary>
-    public partial class EndpointConfiguration : ExposeSettings
+    public partial class 
+        EndpointConfiguration : ExposeSettings
     {
         /// <summary>
         /// Initializes the endpoint configuration builder.
@@ -75,6 +77,15 @@ namespace NServiceBus
         public void SendOnly()
         {
             Settings.Set("Endpoint.SendOnly", true);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        //public void RegisterResolver(Func<Type, object> resolver)
+        public void RegisterResolver(Func<ContextBag, IDisposable> factory)
+        {
+            Settings.Set("ResolverFactory", factory);
         }
 
         /// <summary>

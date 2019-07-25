@@ -56,7 +56,13 @@
             ExcludedTypes.AddRange(types);
         }
 
-        internal List<string> ExcludedAssemblies { get; } = new List<string>(0);
-        internal List<Type> ExcludedTypes { get; } = new List<Type>(0);
+        /// <summary>
+        /// 
+        /// </summary>
+        public List<string> ExcludedAssemblies { get; } = new List<string>(0);
+        /// <summary>
+        /// 
+        /// </summary>
+        public List<Type> ExcludedTypes { get; } = new List<Type>(0);
     }
 }

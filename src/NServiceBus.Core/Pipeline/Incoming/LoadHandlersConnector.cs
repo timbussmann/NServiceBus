@@ -42,7 +42,15 @@
 
                 foreach (var messageHandler in handlersToInvoke)
                 {
-                    messageHandler.Instance = context.Builder.Build(messageHandler.HandlerType);
+                    //resolve message handler from external resolver if existing
+                    if (context.Extensions.TryGet<Func<Type, object>>(out var externalResolver))
+                    {
+                        messageHandler.Instance = externalResolver(messageHandler.HandlerType);
+                    }
+                    else
+                    {
+                        messageHandler.Instance = context.Builder.Build(messageHandler.HandlerType);
+                    }
 
                     var handlingContext = this.CreateInvokeHandlerContext(messageHandler, storageSession, context);
                     await stage(handlingContext).ConfigureAwait(false);

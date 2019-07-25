@@ -408,9 +408,18 @@ namespace NServiceBus.Hosting.Helpers
         }
 
         AssemblyValidator assemblyValidator = new AssemblyValidator();
-        internal List<string> AssembliesToSkip = new List<string>();
-        internal bool ScanNestedDirectories;
-        internal List<Type> TypesToSkip = new List<Type>();
+        /// <summary>
+        /// 
+        /// </summary>
+        public List<string> AssembliesToSkip = new List<string>();
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool ScanNestedDirectories;
+        /// <summary>
+        /// 
+        /// </summary>
+        public List<Type> TypesToSkip = new List<Type>();
         Assembly assemblyToScan;
         string baseDirectoryToScan;
         const string NServicebusCoreAssemblyName = "NServiceBus.Core";
