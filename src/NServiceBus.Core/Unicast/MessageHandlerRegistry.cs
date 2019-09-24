@@ -26,13 +26,12 @@
             // ReSharper disable once LoopCanBeConvertedToQuery
             foreach (var handlersAndMessages in handlerAndMessagesHandledByHandlerCache)
             {
-                var handlerType = handlersAndMessages.Key;
                 // ReSharper disable once LoopCanBeConvertedToQuery
                 foreach (var handlerDelegate in handlersAndMessages.Value)
                 {
                     if (handlerDelegate.MessageType.IsAssignableFrom(messageType))
                     {
-                        messageHandlers.Add(new MessageHandler(handlerDelegate.MethodDelegate, handlerType)
+                        messageHandlers.Add(new MessageHandler(handlerDelegate.MethodDelegate, handlerDelegate.HandlerType)
                         {
                             IsTimeoutHandler = handlerDelegate.IsTimeoutHandler
                         });
@@ -72,13 +71,30 @@
 
             foreach (var messageType in messageTypes)
             {
-                if (!handlerAndMessagesHandledByHandlerCache.TryGetValue(handlerType, out var typeList))
+                if (!handlerAndMessagesHandledByHandlerCache.TryGetValue(handlerType.FullName, out var typeList))
                 {
-                    handlerAndMessagesHandledByHandlerCache[handlerType] = typeList = new List<DelegateHolder>();
+                    handlerAndMessagesHandledByHandlerCache[handlerType.FullName] = typeList = new List<DelegateHolder>();
                 }
 
                 CacheHandlerMethods(handlerType, messageType, typeList);
             }
+        }
+
+        /// <summary>
+        /// Register a message handler.
+        /// </summary>
+        public void RegisterHandler<TMessage>(string id, Type handlerType, Func<object, object, IMessageHandlerContext, Task> handler)
+        {
+            handlerAndMessagesHandledByHandlerCache.Add(id, new List<DelegateHolder>
+            {
+                new DelegateHolder
+                {
+                    HandlerType = handlerType,
+                    IsTimeoutHandler = false,
+                    MessageType = typeof(TMessage),
+                    MethodDelegate = handler
+                }
+            });
         }
 
         /// <summary>
@@ -107,6 +123,7 @@
             var delegateHolder = new DelegateHolder
             {
                 MessageType = messageType,
+                HandlerType = handler,
                 MethodDelegate = handleMethod,
                 IsTimeoutHandler = isTimeoutHandler
             };
@@ -171,14 +188,17 @@
             }
         }
 
-        readonly Dictionary<Type, List<DelegateHolder>> handlerAndMessagesHandledByHandlerCache = new Dictionary<Type, List<DelegateHolder>>();
+        readonly Dictionary<string, List<DelegateHolder>> handlerAndMessagesHandledByHandlerCache = new Dictionary<string, List<DelegateHolder>>();
         static ILog Log = LogManager.GetLogger<MessageHandlerRegistry>();
 
         class DelegateHolder
         {
             public bool IsTimeoutHandler { get; set; }
             public Type MessageType;
+            public Type HandlerType;
             public Func<object, object, IMessageHandlerContext, Task> MethodDelegate;
         }
+
+        
     }
 }
