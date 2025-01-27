@@ -1,6 +1,5 @@
 ﻿namespace NServiceBus.AcceptanceTests.Core.TransportSeam;
 
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 using AcceptanceTesting;
@@ -19,12 +18,21 @@ public class When_transport_is_started_send_only : NServiceBusAcceptanceTest
             .Done(c => c.EndpointsStarted)
             .Run();
 
-        Assert.That(context.ResolvedAddress, Is.EqualTo("SomeAddress"));
+        var endpointName = AcceptanceTesting.Customization.Conventions.EndpointNamingConvention(typeof(Endpoint));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(context.ResolvedAddress, Is.EqualTo("SomeAddress"));
+            Assert.That(context.LocalQueueAddress.ToString(), Is.EqualTo(endpointName));
+            Assert.That(context.InstanceSpecificQueueAddress, Is.Null);
+        });
     }
 
     class Context : ScenarioContext
     {
         public string ResolvedAddress { get; set; }
+        public QueueAddress LocalQueueAddress { get; set; }
+        public QueueAddress InstanceSpecificQueueAddress { get; set; }
     }
 
     class Endpoint : EndpointConfigurationBuilder
@@ -44,8 +52,8 @@ public class When_transport_is_started_send_only : NServiceBusAcceptanceTest
             {
                 var testContext = (Context)context.Settings.Get<ScenarioContext>();
 
-                Assert.Throws<InvalidOperationException>(() => context.LocalQueueAddress(), "Should throw since the endpoint is send only");
-                Assert.Throws<InvalidOperationException>(() => context.InstanceSpecificQueueAddress(), "Should throw since the endpoint is send only");
+                testContext.LocalQueueAddress = context.LocalQueueAddress();
+                testContext.InstanceSpecificQueueAddress = context.InstanceSpecificQueueAddress();
 
                 context.RegisterStartupTask(s => new StartupTask(testContext,
                     (ITransportAddressResolver)s.GetService(typeof(ITransportAddressResolver))));

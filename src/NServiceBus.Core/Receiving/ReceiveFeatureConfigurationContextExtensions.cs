@@ -16,11 +16,6 @@ public static class ReceiveFeatureConfigurationContextExtensions
     {
         ArgumentNullException.ThrowIfNull(config);
 
-        if (config.Receiving.IsSendOnlyEndpoint)
-        {
-            throw new InvalidOperationException("LocalQueueAddress isn't available for send only endpoints.");
-        }
-
         return config.Receiving.LocalQueueAddress;
     }
 
@@ -30,11 +25,6 @@ public static class ReceiveFeatureConfigurationContextExtensions
     public static QueueAddress InstanceSpecificQueueAddress(this FeatureConfigurationContext config)
     {
         ArgumentNullException.ThrowIfNull(config);
-
-        if (config.Receiving.IsSendOnlyEndpoint)
-        {
-            throw new InvalidOperationException("InstanceSpecificQueueAddress isn't available for send only endpoints.");
-        }
 
         return config.Receiving.InstanceSpecificQueueAddress;
     }
